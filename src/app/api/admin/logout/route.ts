@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { clearAdminCookie } from "@/lib/auth";
+import { redirectUrl } from "@/lib/url";
 
 export async function POST(request: NextRequest) {
   await clearAdminCookie();
-  return NextResponse.redirect(new URL("/admin", request.url), { status: 303 });
+  return NextResponse.redirect(redirectUrl(request, "/admin"), { status: 303 });
 }

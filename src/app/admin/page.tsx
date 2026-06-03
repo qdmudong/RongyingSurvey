@@ -1,11 +1,11 @@
 import QRCode from "qrcode";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { isAdminAuthenticated } from "@/lib/auth";
 import { asArray } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
 import type { DimensionScore, SurveyResult } from "@/lib/satir";
 import { ensureBuiltinSurveys } from "@/lib/surveys";
+import { getPublicOrigin } from "@/lib/url";
 
 type AdminPageProps = {
   searchParams: Promise<{ error?: string }>;
@@ -34,10 +34,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
   await ensureBuiltinSurveys();
 
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("host") ?? "localhost:3000";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const origin = `${protocol}://${host}`;
+  const origin = await getPublicOrigin();
   const surveys = await prisma.survey.findMany({
     include: {
       submissions: {
