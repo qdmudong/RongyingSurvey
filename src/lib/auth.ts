@@ -11,6 +11,10 @@ function tokenForPassword(password: string) {
   return createHash("sha256").update(`rongying:${password}`).digest("hex");
 }
 
+function shouldUseSecureCookie() {
+  return process.env.PUBLIC_BASE_URL?.startsWith("https://") ?? process.env.NODE_ENV === "production";
+}
+
 export async function isAdminAuthenticated() {
   const cookieStore = await cookies();
   return cookieStore.get(COOKIE_NAME)?.value === tokenForPassword(adminSecret());
@@ -21,7 +25,7 @@ export async function setAdminCookie() {
   cookieStore.set(COOKIE_NAME, tokenForPassword(adminSecret()), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookie(),
     path: "/",
     maxAge: 60 * 60 * 8,
   });
