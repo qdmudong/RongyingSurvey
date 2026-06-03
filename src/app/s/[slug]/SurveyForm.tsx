@@ -39,7 +39,8 @@ export function SurveyForm({
 
   const answeredCount = Object.keys(answers).length;
   const progress = Math.round((answeredCount / questions.length) * 100);
-  const isComplete = respondent.trim().length > 0 && answeredCount === questions.length;
+  const hasRespondent = respondent.trim().length > 0;
+  const isComplete = hasRespondent && answeredCount === questions.length;
 
   const groupedQuestions = useMemo(
     () =>
@@ -55,10 +56,17 @@ export function SurveyForm({
   const isCurrentPartComplete =
     Boolean(currentGroup) && currentPartAnsweredCount === currentGroup.questions.length;
   const isLastPart = currentPart === groupedQuestions.length - 1;
+  const isCurrentStepComplete = isCurrentPartComplete && (currentPart !== 0 || hasRespondent);
+  const shouldShowNamePanel = currentPart === 0 || (isLastPart && !hasRespondent);
 
   function goToNextPart() {
     if (!isCurrentPartComplete) {
       setError("请完成本部分所有题目后继续。");
+      return;
+    }
+
+    if (currentPart === 0 && !hasRespondent) {
+      setError("请填写姓名后继续。");
       return;
     }
 
@@ -76,6 +84,11 @@ export function SurveyForm({
   async function submitSurvey() {
     if (!isCurrentPartComplete) {
       setError("请完成本部分所有题目后提交。");
+      return;
+    }
+
+    if (!hasRespondent) {
+      setError("请填写姓名后提交。");
       return;
     }
 
@@ -167,7 +180,7 @@ export function SurveyForm({
         </div>
       </header>
 
-      {currentPart === 0 && (
+      {shouldShowNamePanel && (
         <section className="name-panel">
           <label htmlFor="respondent">姓名</label>
           <input
@@ -177,6 +190,7 @@ export function SurveyForm({
             placeholder="请输入姓名"
             onChange={(event) => setRespondent(event.target.value)}
           />
+          {!hasRespondent && <p>请填写姓名后继续测评。</p>}
         </section>
       )}
 
@@ -227,7 +241,7 @@ export function SurveyForm({
               {submitting ? "提交中..." : "提交测评"}
             </button>
           ) : (
-            <button className="primary-button" type="button" disabled={!isCurrentPartComplete || submitting} onClick={goToNextPart}>
+            <button className="primary-button" type="button" disabled={!isCurrentStepComplete || submitting} onClick={goToNextPart}>
               下一部分
             </button>
           )}
