@@ -1,0 +1,8 @@
+node_modules
+.next
+dev.db
+dev.db-*
+.env
+npm-debug.log*
+IMG_*.PNG
+*.doc

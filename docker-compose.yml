@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/app/data/dev.db"
+      ADMIN_PASSWORD: "change-this-password"
+    volumes:
+      - survey-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  survey-data:
