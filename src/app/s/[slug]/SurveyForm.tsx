@@ -182,7 +182,10 @@ export function SurveyForm({
 
       {shouldShowNamePanel && (
         <section className="name-panel">
-          <label htmlFor="respondent">姓名</label>
+          <label htmlFor="respondent">
+            <span className="required-mark">*</span>
+            姓名
+          </label>
           <input
             id="respondent"
             type="text"

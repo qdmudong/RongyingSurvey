@@ -288,9 +288,15 @@ input {
 }
 
 .name-panel label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 8px;
   font-weight: 700;
+}
+
+.required-mark {
+  color: var(--danger);
 }
 
 .name-panel input,
