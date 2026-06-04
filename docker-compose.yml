@@ -1,30 +1,15 @@
 services:
   app:
     build: .
-    expose:
-      - "3000"
+    ports:
+      - "80:3000"
     environment:
       DATABASE_URL: "file:/app/data/dev.db"
       ADMIN_PASSWORD: "change-this-password"
-      PUBLIC_BASE_URL: "https://124-220-45-252.nip.io"
+      PUBLIC_BASE_URL: "http://124.220.45.252"
     volumes:
       - survey-data:/app/data
     restart: unless-stopped
 
-  caddy:
-    image: caddy:2
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-data:/data
-      - caddy-config:/config
-    depends_on:
-      - app
-    restart: unless-stopped
-
 volumes:
   survey-data:
-  caddy-data:
-  caddy-config:

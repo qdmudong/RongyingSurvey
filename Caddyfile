@@ -1,4 +1,0 @@
-124-220-45-252.nip.io {
-  encode gzip
-  reverse_proxy app:3000
-}

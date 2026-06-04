@@ -34,12 +34,7 @@ npm run build
 docker compose up -d --build
 ```
 
-The Docker Compose setup stores SQLite data in the `survey-data` volume. Caddy listens on ports `80` and `443`, gets an HTTPS certificate, and proxies traffic to the app on Docker-internal port `3000`.
-
-Production URLs:
-
-- `https://124-220-45-252.nip.io/s/satir-coping`
-- `https://124-220-45-252.nip.io/admin`
+The Docker Compose setup stores SQLite data in the `survey-data` volume and runs the app on port `3000`.
 
 Change `ADMIN_PASSWORD` in `docker-compose.yml` before exposing the app publicly.
 
