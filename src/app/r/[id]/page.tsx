@@ -28,6 +28,9 @@ export default async function ResultPage({ params }: PageProps) {
       <section className="result-header">
         <p>{submission.survey.title}</p>
         <h1>{submission.respondent} 的测评结果</h1>
+        <a className="report-download" href={`/api/reports/${submission.id}`}>
+          下载测评报告
+        </a>
         <div className="dominant-box">
           <span>主导应对姿态</span>
           <strong>{result.dominant}</strong>

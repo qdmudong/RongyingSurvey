@@ -398,6 +398,19 @@ input {
   line-height: 1.2;
 }
 
+.report-download {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--blue);
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .dominant-box {
   margin-top: 18px;
   padding: 16px;
