@@ -91,19 +91,19 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   doc.text(`完成时间：${formatDate(data.createdAt)}`);
   doc.moveDown(0.8);
 
-  doc.roundedRect(left, doc.y, pageWidth, 56, 8).fill("#e8f4ff");
-  doc.fillColor("#0b70d8").fontSize(12).text("主导应对姿态", left + 16, doc.y + 14);
-  doc.fontSize(22).text(data.dominant, left + 16, doc.y + 2);
-  doc.moveDown(2);
+  drawDominantBox(doc, left, pageWidth, data.dominant);
 
+  ensureSpace(doc, 230);
   drawSectionTitle(doc, "得分明细");
   drawScoreTable(doc, data.scores);
 
-  doc.moveDown(1.2);
+  doc.moveDown(0.8);
+  ensureSpace(doc, 230);
   drawSectionTitle(doc, "维度柱状图");
   drawBarChart(doc, data.scores);
 
-  doc.moveDown(1.2);
+  doc.moveDown(0.8);
+  ensureSpace(doc, 150);
   drawSectionTitle(doc, "重要说明");
   data.notes.forEach((note) => {
     doc.fontSize(11).fillColor("#374151").text(`• ${note}`, {
@@ -117,9 +117,27 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   });
 }
 
+function drawDominantBox(doc: PDFKit.PDFDocument, left: number, width: number, dominant: string) {
+  const top = doc.y;
+  const height = 50;
+
+  doc.roundedRect(left, top, width, height, 8).fill("#e8f4ff");
+  doc.fillColor("#0b70d8").fontSize(11).text("主导应对姿态", left + 16, top + 10);
+  doc.fontSize(19).text(dominant, left + 16, top + 25);
+  doc.y = top + height + 28;
+}
+
 function drawSectionTitle(doc: PDFKit.PDFDocument, title: string) {
   doc.fontSize(15).fillColor("#111827").text(title);
   doc.moveDown(0.5);
+}
+
+function ensureSpace(doc: PDFKit.PDFDocument, requiredHeight: number) {
+  const bottom = doc.page.height - doc.page.margins.bottom;
+
+  if (doc.y + requiredHeight > bottom) {
+    doc.addPage();
+  }
 }
 
 function drawScoreTable(doc: PDFKit.PDFDocument, scores: DimensionScore[]) {
@@ -173,7 +191,7 @@ function drawBarChart(doc: PDFKit.PDFDocument, scores: DimensionScore[]) {
   const left = doc.page.margins.left + 14;
   const top = doc.y + 8;
   const chartWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right - 28;
-  const chartHeight = 160;
+  const chartHeight = 140;
   const baseline = top + chartHeight;
   const barAreaWidth = chartWidth / scores.length;
 
@@ -201,7 +219,7 @@ function drawBarChart(doc: PDFKit.PDFDocument, scores: DimensionScore[]) {
     });
   });
 
-  doc.y = baseline + 34;
+  doc.y = baseline + 30;
 }
 
 function formatDate(date: Date) {
