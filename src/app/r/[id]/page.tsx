@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation";
+import { formatDuration } from "@/lib/duration";
 import { asArray } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
-import { normalizeImportantNotes, type DimensionScore, type SurveyResult } from "@/lib/satir";
+import {
+  normalizeImportantNotes,
+  resultEvaluationNotes,
+  type DimensionScore,
+  type SurveyResult,
+} from "@/lib/satir";
 import { ResultChart } from "./ResultChart";
 
 type PageProps = {
@@ -28,6 +34,10 @@ export default async function ResultPage({ params }: PageProps) {
       <section className="result-header">
         <p>{submission.survey.title}</p>
         <h1>{submission.respondent} 的测评结果</h1>
+        <div className="result-meta">
+          <span>完成时间：{submission.createdAt.toLocaleString("zh-CN")}</span>
+          <span>测评用时：{formatDuration(submission.durationSeconds)}</span>
+        </div>
         <a className="report-download" href={`/api/reports/${submission.id}`}>
           下载测评报告
         </a>
@@ -42,7 +52,7 @@ export default async function ResultPage({ params }: PageProps) {
         <div className="score-table">
           <div className="score-row score-head">
             <span>维度</span>
-            <span>平均分</span>
+            <span>得分</span>
             <span>结果评定</span>
           </div>
           {scores.map((score) => (
@@ -58,6 +68,15 @@ export default async function ResultPage({ params }: PageProps) {
       <section className="result-section">
         <h2>柱状图示例</h2>
         <ResultChart scores={scores} />
+      </section>
+
+      <section className="result-section evaluation-section">
+        <h2>结果评定</h2>
+        <ul>
+          {resultEvaluationNotes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
       </section>
 
       <section className="result-section note-section">

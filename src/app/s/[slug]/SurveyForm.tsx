@@ -31,6 +31,7 @@ export function SurveyForm({
 }: SurveyFormProps) {
   const router = useRouter();
   const [started, setStarted] = useState(false);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
   const [respondent, setRespondent] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [currentPart, setCurrentPart] = useState(0);
@@ -96,6 +97,7 @@ export function SurveyForm({
 
     setSubmitting(true);
     setError("");
+    const durationSeconds = startedAt ? Math.max(0, Math.round((Date.now() - startedAt) / 1000)) : null;
 
     const response = await fetch("/api/submissions", {
       method: "POST",
@@ -109,6 +111,7 @@ export function SurveyForm({
         dimensions,
         resultBands,
         notes,
+        durationSeconds,
       }),
     });
 
@@ -155,7 +158,14 @@ export function SurveyForm({
         </section>
 
         <div className="bottom-action">
-          <button className="primary-button" type="button" onClick={() => setStarted(true)}>
+          <button
+            className="primary-button"
+            type="button"
+            onClick={() => {
+              setStartedAt(Date.now());
+              setStarted(true);
+            }}
+          >
             开始填写
           </button>
         </div>

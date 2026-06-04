@@ -398,6 +398,14 @@ input {
   line-height: 1.2;
 }
 
+.result-meta {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .report-download {
   min-height: 42px;
   display: flex;
@@ -414,18 +422,17 @@ input {
 .dominant-box {
   margin-top: 18px;
   padding: 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
   background: var(--blue-soft);
 }
 
-.dominant-box span,
 .dominant-box strong {
-  display: block;
-}
-
-.dominant-box strong {
-  margin-top: 4px;
   font-size: 28px;
   color: var(--blue-dark);
+  white-space: nowrap;
 }
 
 .result-section {
@@ -475,10 +482,12 @@ input {
   height: 300px;
 }
 
+.evaluation-section ul,
 .note-section ol {
   padding-left: 20px;
 }
 
+.evaluation-section li,
 .note-section li {
   margin-top: 10px;
   line-height: 1.7;

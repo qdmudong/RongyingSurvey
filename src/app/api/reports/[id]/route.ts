@@ -1,10 +1,16 @@
 import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import { readFileSync } from "fs";
 import { NextResponse } from "next/server";
+import { formatDuration } from "@/lib/duration";
 import { asArray } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
 import { resolveReportFont } from "@/lib/report-font";
-import { normalizeImportantNotes, type DimensionScore, type SurveyResult } from "@/lib/satir";
+import {
+  normalizeImportantNotes,
+  resultEvaluationNotes,
+  type DimensionScore,
+  type SurveyResult,
+} from "@/lib/satir";
 
 export const runtime = "nodejs";
 
@@ -30,6 +36,7 @@ export async function GET(_request: Request, { params }: RouteProps) {
     title: submission.survey.title,
     respondent: submission.respondent,
     createdAt: submission.createdAt,
+    durationSeconds: submission.durationSeconds,
     dominant: result.dominant,
     scores,
     notes,
@@ -52,6 +59,7 @@ type ReportData = {
   title: string;
   respondent: string;
   createdAt: Date;
+  durationSeconds?: number | null;
   dominant: string;
   scores: DimensionScore[];
   notes: string[];
@@ -89,6 +97,7 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   doc.moveDown(0.8);
   doc.fontSize(11).fillColor("#4b5563").text(`姓名：${data.respondent}`, left);
   doc.text(`完成时间：${formatDate(data.createdAt)}`);
+  doc.text(`测评用时：${formatDuration(data.durationSeconds)}`);
   doc.moveDown(0.8);
 
   drawDominantBox(doc, left, pageWidth, data.dominant);
@@ -101,6 +110,15 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   ensureSpace(doc, 230);
   drawSectionTitle(doc, "维度柱状图");
   drawBarChart(doc, data.scores);
+
+  doc.moveDown(0.8);
+  ensureSpace(doc, 130);
+  drawSectionTitle(doc, "结果评定");
+  resultEvaluationNotes.forEach((note) => {
+    doc.fontSize(11).fillColor("#374151").text(note, {
+      lineGap: 4,
+    });
+  });
 
   doc.moveDown(0.8);
   ensureSpace(doc, 150);
@@ -143,9 +161,9 @@ function ensureSpace(doc: PDFKit.PDFDocument, requiredHeight: number) {
 function drawScoreTable(doc: PDFKit.PDFDocument, scores: DimensionScore[]) {
   const left = doc.page.margins.left;
   const startY = doc.y;
-  const widths = [86, 70, 96, 260];
+  const widths = [110, 96, 306];
   const rowHeight = 30;
-  const headers = ["维度", "总分", "平均分", "结果评定"];
+  const headers = ["维度", "得分", "结果评定"];
 
   drawTableRow(doc, left, startY, widths, rowHeight, headers, true);
 
@@ -156,7 +174,7 @@ function drawScoreTable(doc: PDFKit.PDFDocument, scores: DimensionScore[]) {
       startY + rowHeight * (index + 1),
       widths,
       rowHeight,
-      [score.name, String(score.total), score.average.toFixed(2), score.band],
+      [score.name, score.average.toFixed(2), score.band],
       false,
     );
   });

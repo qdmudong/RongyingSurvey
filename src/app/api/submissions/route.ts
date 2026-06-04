@@ -10,6 +10,7 @@ type SubmitPayload = {
   dimensions?: SurveyDimension[];
   resultBands?: ResultBand[];
   notes?: string[];
+  durationSeconds?: number | null;
 };
 
 export async function POST(request: NextRequest) {
@@ -41,6 +42,10 @@ export async function POST(request: NextRequest) {
     payload.resultBands,
     payload.notes ?? [],
   );
+  const durationSeconds =
+    typeof payload.durationSeconds === "number" && Number.isFinite(payload.durationSeconds)
+      ? Math.max(0, Math.round(payload.durationSeconds))
+      : null;
 
   const submission = await prisma.submission.create({
     data: {
@@ -48,6 +53,7 @@ export async function POST(request: NextRequest) {
       respondent,
       answers,
       result,
+      durationSeconds,
     },
   });
 

@@ -30,6 +30,7 @@ model Submission {
   respondent  String
   answers     Json
   result      Json
+  durationSeconds Int?
   createdAt   DateTime @default(now())
   survey      Survey   @relation(fields: [surveyId], references: [id])
 
