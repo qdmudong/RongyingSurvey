@@ -137,11 +137,16 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
 
 function drawDominantBox(doc: PDFKit.PDFDocument, left: number, width: number, dominant: string) {
   const top = doc.y;
-  const height = 50;
+  const height = 46;
 
   doc.roundedRect(left, top, width, height, 8).fill("#e8f4ff");
-  doc.fillColor("#0b70d8").fontSize(11).text("主导应对姿态", left + 16, top + 10);
-  doc.fontSize(19).text(dominant, left + 16, top + 25);
+  doc.fillColor("#0b70d8").fontSize(12).text("主导应对姿态", left + 16, top + 16, {
+    width: 160,
+  });
+  doc.fontSize(20).text(dominant, left + width - 120, top + 12, {
+    width: 104,
+    align: "right",
+  });
   doc.y = top + height + 28;
 }
 
