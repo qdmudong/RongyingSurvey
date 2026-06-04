@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { asArray } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
 import { resolveReportFont } from "@/lib/report-font";
-import type { DimensionScore, SurveyResult } from "@/lib/satir";
+import { normalizeImportantNotes, type DimensionScore, type SurveyResult } from "@/lib/satir";
 
 export const runtime = "nodejs";
 
@@ -25,7 +25,7 @@ export async function GET(_request: Request, { params }: RouteProps) {
 
   const result = submission.result as unknown as SurveyResult;
   const scores = asArray<DimensionScore>(result.scores);
-  const notes = asArray<string>(result.notes);
+  const notes = normalizeImportantNotes(asArray<string>(result.notes));
   const pdfBuffer = await createReportPdf({
     title: submission.survey.title,
     respondent: submission.respondent,
@@ -105,8 +105,8 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   doc.moveDown(0.8);
   ensureSpace(doc, 150);
   drawSectionTitle(doc, "重要说明");
-  data.notes.forEach((note) => {
-    doc.fontSize(11).fillColor("#374151").text(`• ${note}`, {
+  data.notes.forEach((note, index) => {
+    doc.fontSize(11).fillColor("#374151").text(`${index + 1}. ${note}`, {
       lineGap: 4,
     });
   });

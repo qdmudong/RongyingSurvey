@@ -48,6 +48,8 @@ export type SurveyResult = {
 
 const dimensionNames = ["讨好型", "指责型", "超理智型", "打岔型", "一致型"];
 
+export const finalFeedbackNote = "本问卷为自评工具，若想获得更客观的结果，建议结合360度反馈（让周围的人为你评分）。";
+
 const questionTexts = [
   [
     "当别人对我不满意时，我会立刻感到不安并想办法弥补",
@@ -114,6 +116,7 @@ export const satirSurvey: SurveyConfig = {
     "没有“好”或“坏”的应对姿态，所有姿态都是我们在成长过程中学会的生存策略。",
     "大多数人会同时使用多种应对姿态，只是在不同情境下会有不同的主导姿态。",
     "我们的目标不是消除某种姿态，而是增加选择的灵活性，在合适的情境下使用合适的姿态。",
+    finalFeedbackNote,
   ],
   options: [
     { label: "几乎从不", score: 1 },
@@ -170,4 +173,11 @@ export function calculateResult(
     scores,
     notes,
   };
+}
+
+export function normalizeImportantNotes(notes: string[]) {
+  const normalizedNotes = notes.map((note) => note.trim()).filter(Boolean);
+  const hasFinalNote = normalizedNotes.some((note) => note.includes("360度反馈") || note.includes("360 度反馈"));
+
+  return hasFinalNote ? normalizedNotes : [...normalizedNotes, finalFeedbackNote];
 }

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { asArray } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
-import type { DimensionScore, SurveyResult } from "@/lib/satir";
+import { normalizeImportantNotes, type DimensionScore, type SurveyResult } from "@/lib/satir";
 import { ResultChart } from "./ResultChart";
 
 type PageProps = {
@@ -21,7 +21,7 @@ export default async function ResultPage({ params }: PageProps) {
 
   const result = submission.result as unknown as SurveyResult;
   const scores = asArray<DimensionScore>(result.scores);
-  const notes = asArray<string>(result.notes);
+  const notes = normalizeImportantNotes(asArray<string>(result.notes));
 
   return (
     <main className="result-shell">
@@ -62,9 +62,11 @@ export default async function ResultPage({ params }: PageProps) {
 
       <section className="result-section note-section">
         <h2>重要说明</h2>
-        {notes.map((note) => (
-          <p key={note}>{note}</p>
-        ))}
+        <ol>
+          {notes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ol>
       </section>
     </main>
   );

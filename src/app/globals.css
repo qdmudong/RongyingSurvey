@@ -475,7 +475,11 @@ input {
   height: 300px;
 }
 
-.note-section p {
+.note-section ol {
+  padding-left: 20px;
+}
+
+.note-section li {
   margin-top: 10px;
   line-height: 1.7;
   color: #2f3947;
