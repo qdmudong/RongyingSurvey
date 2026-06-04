@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rongying Survey",
+  title: "萨提亚应对姿态自我测评",
   description: "移动端测评与问卷系统",
 };
 
