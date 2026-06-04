@@ -199,7 +199,6 @@ export function SurveyForm({
 
       {currentGroup && (
         <section className="question-group" key={currentGroup.name}>
-          <div className="group-label">{currentGroup.name}应对姿态</div>
           {currentGroup.questions.map((question) => (
             <article className="question-card" key={question.number}>
               <h2>
