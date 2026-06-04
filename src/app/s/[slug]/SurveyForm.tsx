@@ -72,13 +72,13 @@ export function SurveyForm({
 
     setError("");
     setCurrentPart((part) => Math.min(part + 1, groupedQuestions.length - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
   }
 
   function goToPreviousPart() {
     setError("");
     setCurrentPart((part) => Math.max(part - 1, 0));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
   }
 
   async function submitSurvey() {
