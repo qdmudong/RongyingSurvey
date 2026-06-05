@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { formatDuration } from "@/lib/duration";
 import { asArray } from "@/lib/json";
@@ -13,6 +14,19 @@ import { ResultChart } from "./ResultChart";
 type PageProps = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const submission = await prisma.submission.findUnique({
+    where: { id },
+    include: { survey: true },
+  });
+
+  return {
+    title: submission ? `${submission.survey.title} - 测评结果` : "测评结果",
+    description: "移动端测评结果",
+  };
+}
 
 export default async function ResultPage({ params }: PageProps) {
   const { id } = await params;

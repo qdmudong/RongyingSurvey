@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { asArray } from "@/lib/json";
 import type { ResultBand, SurveyDimension, SurveyOption, SurveyQuestion } from "@/lib/satir";
@@ -7,6 +8,16 @@ import { SurveyForm } from "./SurveyForm";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const survey = await getSurveyBySlug(slug);
+
+  return {
+    title: survey?.title ?? "测评系统",
+    description: survey?.description ?? "移动端测评与问卷系统",
+  };
+}
 
 export default async function SurveyPage({ params }: PageProps) {
   const { slug } = await params;
