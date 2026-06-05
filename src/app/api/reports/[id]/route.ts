@@ -121,23 +121,27 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   ensureSpace(doc, 130);
   drawSectionTitle(doc, "结果评定");
   data.evaluationNotes.forEach((note) => {
-    doc.fontSize(11).fillColor("#374151").text(note, {
-      lineGap: 4,
-    });
+    drawBodyLine(doc, note);
   });
 
   doc.moveDown(0.8);
   ensureSpace(doc, 150);
   drawSectionTitle(doc, "重要说明");
   data.notes.forEach((note, index) => {
-    doc.fontSize(11).fillColor("#374151").text(`${index + 1}. ${note}`, {
-      lineGap: 4,
-    });
+    drawBodyLine(doc, `${index + 1}. ${note}`);
   });
 
   doc.moveDown(1.2);
-  doc.fontSize(9).fillColor("#6b7280").text("本测评为自评工具，仅供个人成长参考。", {
+  doc.fontSize(9).fillColor("#6b7280").text("本测评为自评工具，仅供个人成长参考。", doc.page.margins.left, doc.y, {
     align: "center",
+    width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+  });
+}
+
+function drawBodyLine(doc: PDFKit.PDFDocument, text: string) {
+  doc.fontSize(11).fillColor("#374151").text(text, doc.page.margins.left, doc.y, {
+    width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+      lineGap: 4,
   });
 }
 
@@ -157,7 +161,9 @@ function drawDominantBox(doc: PDFKit.PDFDocument, left: number, width: number, l
 }
 
 function drawSectionTitle(doc: PDFKit.PDFDocument, title: string) {
-  doc.fontSize(15).fillColor("#111827").text(title);
+  doc.fontSize(15).fillColor("#111827").text(title, doc.page.margins.left, doc.y, {
+    width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+  });
   doc.moveDown(0.5);
 }
 

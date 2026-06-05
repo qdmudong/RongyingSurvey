@@ -195,6 +195,8 @@ export function calculateResult(
 
 export function normalizeImportantNotes(notes: string[]) {
   const normalizedNotes = notes.map((note) => note.trim()).filter(Boolean);
+  if (normalizedNotes.length >= 4) return normalizedNotes;
+
   const hasFinalNote = normalizedNotes.some((note) => note.includes("360度反馈") || note.includes("360 度反馈"));
 
   return hasFinalNote ? normalizedNotes : [...normalizedNotes, finalFeedbackNote];
