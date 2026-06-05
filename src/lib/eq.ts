@@ -1,6 +1,6 @@
 import type { SurveyConfig } from "@/lib/satir";
 
-const dimensionNames = ["自我觉知", "自我管理", "社会觉知", "关系管理"];
+const dimensionNames = ["自我觉察", "自我管理", "人际觉察", "人际管理"];
 
 const questionGroups = [
   [
@@ -62,10 +62,10 @@ const questionGroups = [
 ];
 
 export const eqSurvey: SurveyConfig = {
-  title: "《情绪智力胜任力》自评问卷",
+  title: "《情绪智力胜任力》自我测评",
   slug: "eq-four-dimensions",
   description:
-    "本问卷旨在测评个体的情绪智力胜任力，包含自我觉察、自我管理、人际觉察和人际管理四大维度，共48题，约需10分钟。适用场景：团队沟通、各种人际关系、个人成长等。答题时可以选择工作或生活中的特定领域。",
+    "本问卷旨在测评个体的情绪智力胜任力，包含自我觉察、自我管理、人际觉察和人际管理四大维度，共48题，约需10分钟。<br/>适用场景：团队沟通、各种人际关系、个人成长等。答题时可以选择工作或生活中的特定领域。",
   instructions: [
     "请基于过去6个月的实际工作与生活行为作答，不要根据“我应该怎么做”来回答。",
     "不要在某一道题上纠结太久，第一反应往往最准确（建议单题思考不超过10秒）。",
