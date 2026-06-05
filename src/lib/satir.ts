@@ -26,6 +26,8 @@ export type SurveyConfig = {
   description: string;
   instructions: string[];
   notes: string[];
+  evaluationNotes: string[];
+  dominantLabel: string;
   options: SurveyOption[];
   dimensions: SurveyDimension[];
   questions: SurveyQuestion[];
@@ -42,8 +44,10 @@ export type DimensionScore = {
 
 export type SurveyResult = {
   dominant: string;
+  dominantLabel?: string;
   scores: DimensionScore[];
   notes: string[];
+  evaluationNotes?: string[];
 };
 
 const dimensionNames = ["讨好型", "指责型", "超理智型", "打岔型", "一致型"];
@@ -126,6 +130,8 @@ export const satirSurvey: SurveyConfig = {
     "我们的目标不是消除某种姿态，而是增加选择的灵活性，在合适的情境下使用合适的姿态。",
     finalFeedbackNote,
   ],
+  evaluationNotes: resultEvaluationNotes,
+  dominantLabel: "主导应对姿态",
   options: [
     { label: "几乎从不", score: 1 },
     { label: "偶尔", score: 2 },
@@ -158,6 +164,8 @@ export function calculateResult(
   answers: Record<string, number>,
   resultBands: ResultBand[],
   notes: string[],
+  dominantLabel = "主导应对姿态",
+  evaluationNotes: string[] = resultEvaluationNotes,
 ): SurveyResult {
   const scores = dimensions.map((dimension) => {
     const dimensionQuestions = questions.filter((question) => question.dimension === dimension.name);
@@ -178,8 +186,10 @@ export function calculateResult(
 
   return {
     dominant,
+    dominantLabel,
     scores,
     notes,
+    evaluationNotes,
   };
 }
 

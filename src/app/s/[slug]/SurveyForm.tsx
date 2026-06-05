@@ -15,6 +15,8 @@ type SurveyFormProps = {
   questions: SurveyQuestion[];
   resultBands: ResultBand[];
   notes: string[];
+  evaluationNotes: string[];
+  dominantLabel: string;
 };
 
 export function SurveyForm({
@@ -28,6 +30,8 @@ export function SurveyForm({
   questions,
   resultBands,
   notes,
+  evaluationNotes,
+  dominantLabel,
 }: SurveyFormProps) {
   const router = useRouter();
   const [started, setStarted] = useState(false);
@@ -111,6 +115,8 @@ export function SurveyForm({
         dimensions,
         resultBands,
         notes,
+        evaluationNotes,
+        dominantLabel,
         durationSeconds,
       }),
     });

@@ -11,6 +11,8 @@ type SubmitPayload = {
   resultBands?: ResultBand[];
   notes?: string[];
   durationSeconds?: number | null;
+  evaluationNotes?: string[];
+  dominantLabel?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -41,6 +43,8 @@ export async function POST(request: NextRequest) {
     answers,
     payload.resultBands,
     payload.notes ?? [],
+    payload.dominantLabel,
+    payload.evaluationNotes,
   );
   const durationSeconds =
     typeof payload.durationSeconds === "number" && Number.isFinite(payload.durationSeconds)

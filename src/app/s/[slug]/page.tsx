@@ -27,7 +27,9 @@ export default async function SurveyPage({ params }: PageProps) {
       dimensions={asArray<SurveyDimension>(survey.dimensions)}
       questions={asArray<SurveyQuestion>(survey.questions)}
       resultBands={asArray<ResultBand>(survey.resultBands)}
-      notes={asArray(survey.notes)}
+      notes={asArray<string>(survey.notes)}
+      evaluationNotes={asArray<string>(survey.evaluationNotes)}
+      dominantLabel={survey.dominantLabel}
     />
   );
 }

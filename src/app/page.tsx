@@ -11,6 +11,9 @@ export default function Home() {
           <Link className="primary-link" href="/s/satir-coping">
             进入萨提亚测评
           </Link>
+          <Link className="secondary-link" href="/s/eq-four-dimensions">
+            进入情商四维度测评
+          </Link>
           <Link className="secondary-link" href="/admin">
             管理后台
           </Link>

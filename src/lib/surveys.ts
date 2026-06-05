@@ -1,8 +1,9 @@
 import { prisma } from "@/lib/prisma";
+import { eqSurvey } from "@/lib/eq";
 import { satirSurvey, SurveyConfig } from "@/lib/satir";
 
 export async function ensureBuiltinSurveys() {
-  await upsertSurvey(satirSurvey);
+  await Promise.all([upsertSurvey(satirSurvey), upsertSurvey(eqSurvey)]);
 }
 
 export async function getSurveyBySlug(slug: string) {
@@ -25,6 +26,8 @@ async function upsertSurvey(survey: SurveyConfig) {
       questions: survey.questions,
       resultBands: survey.resultBands,
       notes: survey.notes,
+      evaluationNotes: survey.evaluationNotes,
+      dominantLabel: survey.dominantLabel,
       isActive: true,
     },
     create: {
@@ -37,6 +40,8 @@ async function upsertSurvey(survey: SurveyConfig) {
       questions: survey.questions,
       resultBands: survey.resultBands,
       notes: survey.notes,
+      evaluationNotes: survey.evaluationNotes,
+      dominantLabel: survey.dominantLabel,
       isActive: true,
     },
   });

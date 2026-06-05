@@ -28,6 +28,8 @@ export default async function ResultPage({ params }: PageProps) {
   const result = submission.result as unknown as SurveyResult;
   const scores = asArray<DimensionScore>(result.scores);
   const notes = normalizeImportantNotes(asArray<string>(result.notes));
+  const dominantLabel = result.dominantLabel ?? "主导应对姿态";
+  const evaluationNotes = result.evaluationNotes?.length ? result.evaluationNotes : resultEvaluationNotes;
 
   return (
     <main className="result-shell">
@@ -42,7 +44,7 @@ export default async function ResultPage({ params }: PageProps) {
           下载测评报告
         </a>
         <div className="dominant-box">
-          <span>主导应对姿态</span>
+          <span>{dominantLabel}</span>
           <strong>{result.dominant}</strong>
         </div>
       </section>
@@ -73,7 +75,7 @@ export default async function ResultPage({ params }: PageProps) {
       <section className="result-section evaluation-section">
         <h2>结果评定</h2>
         <ul>
-          {resultEvaluationNotes.map((note) => (
+          {evaluationNotes.map((note) => (
             <li key={note}>{note}</li>
           ))}
         </ul>

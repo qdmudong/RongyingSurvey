@@ -32,14 +32,18 @@ export async function GET(_request: Request, { params }: RouteProps) {
   const result = submission.result as unknown as SurveyResult;
   const scores = asArray<DimensionScore>(result.scores);
   const notes = normalizeImportantNotes(asArray<string>(result.notes));
+  const dominantLabel = result.dominantLabel ?? "主导应对姿态";
+  const evaluationNotes = result.evaluationNotes?.length ? result.evaluationNotes : resultEvaluationNotes;
   const pdfBuffer = await createReportPdf({
     title: submission.survey.title,
     respondent: submission.respondent,
     createdAt: submission.createdAt,
     durationSeconds: submission.durationSeconds,
     dominant: result.dominant,
+    dominantLabel,
     scores,
     notes,
+    evaluationNotes,
   });
 
   const body = new ArrayBuffer(pdfBuffer.byteLength);
@@ -61,8 +65,10 @@ type ReportData = {
   createdAt: Date;
   durationSeconds?: number | null;
   dominant: string;
+  dominantLabel: string;
   scores: DimensionScore[];
   notes: string[];
+  evaluationNotes: string[];
 };
 
 function createReportPdf(data: ReportData) {
@@ -100,7 +106,7 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   doc.text(`测评用时：${formatDuration(data.durationSeconds)}`);
   doc.moveDown(0.8);
 
-  drawDominantBox(doc, left, pageWidth, data.dominant);
+  drawDominantBox(doc, left, pageWidth, data.dominantLabel, data.dominant);
 
   ensureSpace(doc, 230);
   drawSectionTitle(doc, "得分明细");
@@ -114,7 +120,7 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   doc.moveDown(0.8);
   ensureSpace(doc, 130);
   drawSectionTitle(doc, "结果评定");
-  resultEvaluationNotes.forEach((note) => {
+  data.evaluationNotes.forEach((note) => {
     doc.fontSize(11).fillColor("#374151").text(note, {
       lineGap: 4,
     });
@@ -135,12 +141,12 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   });
 }
 
-function drawDominantBox(doc: PDFKit.PDFDocument, left: number, width: number, dominant: string) {
+function drawDominantBox(doc: PDFKit.PDFDocument, left: number, width: number, label: string, dominant: string) {
   const top = doc.y;
   const height = 46;
 
   doc.roundedRect(left, top, width, height, 8).fill("#e8f4ff");
-  doc.fillColor("#0b70d8").fontSize(12).text("主导应对姿态", left + 16, top + 16, {
+  doc.fillColor("#0b70d8").fontSize(12).text(label, left + 16, top + 16, {
     width: 160,
   });
   doc.fontSize(20).text(dominant, left + width - 120, top + 12, {

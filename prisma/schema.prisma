@@ -18,6 +18,8 @@ model Survey {
   questions   Json
   resultBands Json         @default("[]")
   notes       Json         @default("[]")
+  evaluationNotes Json     @default("[]")
+  dominantLabel String     @default("主导应对姿态")
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
