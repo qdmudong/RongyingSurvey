@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { formatDuration } from "@/lib/duration";
-import { asArray } from "@/lib/json";
+import { asArray, asRecord } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
 import {
   normalizeImportantNotes,
@@ -42,7 +42,14 @@ export default async function ResultPage({ params }: PageProps) {
   const result = submission.result as unknown as SurveyResult;
   const scores = asArray<DimensionScore>(result.scores);
   const notes = normalizeImportantNotes(asArray<string>(result.notes));
-  const dominantLabel = result.dominantLabel ?? "主导应对姿态";
+  const isEqSurvey = submission.survey.slug === "eq-four-dimensions";
+  const dominantLabel = isEqSurvey ? "情商综合评分" : (result.dominantLabel ?? "主导应对姿态");
+  const answers = asRecord<number>(submission.answers);
+  const answerValues = Object.values(answers).filter((value) => typeof value === "number" && Number.isFinite(value));
+  const fallbackOverallAverage =
+    answerValues.length > 0 ? Number((answerValues.reduce((sum, value) => sum + value, 0) / answerValues.length).toFixed(2)) : 0;
+  const overallAverage = result.overallAverage ?? fallbackOverallAverage;
+  const dominantValue = isEqSurvey ? overallAverage.toFixed(2) : result.dominant;
   const evaluationNotes = result.evaluationNotes?.length ? result.evaluationNotes : resultEvaluationNotes;
 
   return (
@@ -57,9 +64,9 @@ export default async function ResultPage({ params }: PageProps) {
         <a className="report-download" href={`/api/reports/${submission.id}`}>
           下载测评报告
         </a>
-        <div className="dominant-box">
+        <div className={`dominant-box${isEqSurvey ? " dominant-box-centered" : ""}`}>
           <span>{dominantLabel}</span>
-          <strong>{result.dominant}</strong>
+          <strong>{dominantValue}</strong>
         </div>
       </section>
 

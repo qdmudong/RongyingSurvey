@@ -83,7 +83,7 @@ export const eqSurvey: SurveyConfig = {
     "2-3 分：待提升项，是你当前的主要短板，可能会限制你的职业发展",
     "1-2 分：急需改进项，会严重影响你的工作表现和人际关系，需优先修炼",
   ],
-  dominantLabel: "主导情商维度",
+  dominantLabel: "情商综合评分",
   options: [
     { label: "几乎从不", score: 1 },
     { label: "偶尔", score: 2 },

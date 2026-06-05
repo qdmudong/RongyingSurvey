@@ -435,6 +435,16 @@ input {
   white-space: nowrap;
 }
 
+.dominant-box-centered {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.dominant-box-centered strong {
+  font-size: 32px;
+}
+
 .result-section {
   margin-top: 18px;
   padding: 16px;

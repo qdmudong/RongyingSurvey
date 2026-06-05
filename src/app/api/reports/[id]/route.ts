@@ -2,7 +2,7 @@ import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import { readFileSync } from "fs";
 import { NextResponse } from "next/server";
 import { formatDuration } from "@/lib/duration";
-import { asArray } from "@/lib/json";
+import { asArray, asRecord } from "@/lib/json";
 import { prisma } from "@/lib/prisma";
 import { resolveReportFont } from "@/lib/report-font";
 import {
@@ -32,15 +32,23 @@ export async function GET(_request: Request, { params }: RouteProps) {
   const result = submission.result as unknown as SurveyResult;
   const scores = asArray<DimensionScore>(result.scores);
   const notes = normalizeImportantNotes(asArray<string>(result.notes));
-  const dominantLabel = result.dominantLabel ?? "主导应对姿态";
+  const isEqSurvey = submission.survey.slug === "eq-four-dimensions";
+  const dominantLabel = isEqSurvey ? "情商综合评分" : (result.dominantLabel ?? "主导应对姿态");
+  const answers = asRecord<number>(submission.answers);
+  const answerValues = Object.values(answers).filter((value) => typeof value === "number" && Number.isFinite(value));
+  const fallbackOverallAverage =
+    answerValues.length > 0 ? Number((answerValues.reduce((sum, value) => sum + value, 0) / answerValues.length).toFixed(2)) : 0;
+  const overallAverage = result.overallAverage ?? fallbackOverallAverage;
+  const dominantValue = isEqSurvey ? overallAverage.toFixed(2) : result.dominant;
   const evaluationNotes = result.evaluationNotes?.length ? result.evaluationNotes : resultEvaluationNotes;
   const pdfBuffer = await createReportPdf({
     title: submission.survey.title,
     respondent: submission.respondent,
     createdAt: submission.createdAt,
     durationSeconds: submission.durationSeconds,
-    dominant: result.dominant,
+    dominant: dominantValue,
     dominantLabel,
+    isCenteredSummary: isEqSurvey,
     scores,
     notes,
     evaluationNotes,
@@ -66,6 +74,7 @@ type ReportData = {
   durationSeconds?: number | null;
   dominant: string;
   dominantLabel: string;
+  isCenteredSummary: boolean;
   scores: DimensionScore[];
   notes: string[];
   evaluationNotes: string[];
@@ -106,7 +115,7 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   doc.text(`测评用时：${formatDuration(data.durationSeconds)}`);
   doc.moveDown(0.8);
 
-  drawDominantBox(doc, left, pageWidth, data.dominantLabel, data.dominant);
+  drawDominantBox(doc, left, pageWidth, data.dominantLabel, data.dominant, data.isCenteredSummary);
 
   ensureSpace(doc, 230);
   drawSectionTitle(doc, "得分明细");
@@ -145,11 +154,31 @@ function drawBodyLine(doc: PDFKit.PDFDocument, text: string) {
   });
 }
 
-function drawDominantBox(doc: PDFKit.PDFDocument, left: number, width: number, label: string, dominant: string) {
+function drawDominantBox(
+  doc: PDFKit.PDFDocument,
+  left: number,
+  width: number,
+  label: string,
+  dominant: string,
+  isCenteredSummary: boolean,
+) {
   const top = doc.y;
   const height = 46;
 
   doc.roundedRect(left, top, width, height, 8).fill("#e8f4ff");
+  if (isCenteredSummary) {
+    doc.fillColor("#0b70d8").fontSize(12).text(label, left, top + 8, {
+      width,
+      align: "center",
+    });
+    doc.fontSize(21).text(dominant, left, top + 22, {
+      width,
+      align: "center",
+    });
+    doc.y = top + height + 28;
+    return;
+  }
+
   doc.fillColor("#0b70d8").fontSize(12).text(label, left + 16, top + 16, {
     width: 160,
   });

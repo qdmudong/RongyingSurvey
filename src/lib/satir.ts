@@ -45,6 +45,7 @@ export type DimensionScore = {
 export type SurveyResult = {
   dominant: string;
   dominantLabel?: string;
+  overallAverage?: number;
   scores: DimensionScore[];
   notes: string[];
   evaluationNotes?: string[];
@@ -167,6 +168,8 @@ export function calculateResult(
   dominantLabel = "主导应对姿态",
   evaluationNotes: string[] = resultEvaluationNotes,
 ): SurveyResult {
+  const overallTotal = questions.reduce((sum, question) => sum + (answers[String(question.number)] ?? 0), 0);
+  const overallAverage = questions.length > 0 ? Number((overallTotal / questions.length).toFixed(2)) : 0;
   const scores = dimensions.map((dimension) => {
     const dimensionQuestions = questions.filter((question) => question.dimension === dimension.name);
     const total = dimensionQuestions.reduce((sum, question) => sum + (answers[String(question.number)] ?? 0), 0);
@@ -187,6 +190,7 @@ export function calculateResult(
   return {
     dominant,
     dominantLabel,
+    overallAverage,
     scores,
     notes,
     evaluationNotes,
