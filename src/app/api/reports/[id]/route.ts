@@ -121,7 +121,7 @@ function drawReport(doc: PDFKit.PDFDocument, data: ReportData) {
   ensureSpace(doc, 130);
   drawSectionTitle(doc, "结果评定");
   data.evaluationNotes.forEach((note) => {
-    drawBodyLine(doc, note);
+    drawBodyLine(doc, `• ${note}`);
   });
 
   doc.moveDown(0.8);
