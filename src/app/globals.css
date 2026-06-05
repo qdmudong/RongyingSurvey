@@ -118,8 +118,8 @@ input {
 }
 
 .intro-content h1 {
-  margin-top: 28px;
-  font-size: 28px;
+  margin-top: 26px;
+  font-size: 26px;
   line-height: 1.18;
 }
 
@@ -127,6 +127,7 @@ input {
   margin-top: 18px;
   font-size: 15px;
   line-height: 1.65;
+  white-space: pre-line;
 }
 
 .instruction-panel,
