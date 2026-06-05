@@ -12,7 +12,7 @@ export default function Home() {
             进入萨提亚测评
           </Link>
           <Link className="secondary-link" href="/s/eq-four-dimensions">
-            进入情商四维度测评
+            进入情绪智力胜任力测评
           </Link>
           <Link className="secondary-link" href="/admin">
             管理后台
